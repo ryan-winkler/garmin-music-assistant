@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://garmin-music-assistant/protocol/v1_schemas.json",
+  "title": "Garmin Music Assistant Controller Protocol v1",
+  "$defs": {
+    "playbackState": {
+      "type": "string",
+      "enum": ["playing", "paused", "idle"]
+    },
+    "repeatMode": {
+      "type": "string",
+      "enum": ["off", "one", "all"]
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vol", "mute", "seek", "q", "rp", "sh", "fav", "grp"],
+      "properties": {
+        "vol": { "type": "boolean" },
+        "mute": { "type": "boolean" },
+        "seek": { "type": "boolean" },
+        "q": { "type": "boolean" },
+        "rp": { "type": "boolean" },
+        "sh": { "type": "boolean" },
+        "fav": { "type": "boolean" },
+        "grp": { "type": "boolean" }
+      }
+    },
+    "playerSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "n", "s", "v", "m", "g", "q", "ph"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "n": { "type": "string", "maxLength": 24 },
+        "s": { "$ref": "#/$defs/playbackState" },
+        "v": { "type": ["integer", "null"], "minimum": 0, "maximum": 100 },
+        "m": { "type": "boolean" },
+        "g": { "type": "boolean" },
+        "q": { "type": "boolean" },
+        "ph": { "type": "boolean" }
+      }
+    },
+    "playerSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "n", "s", "v", "m", "t", "a", "al",
+        "el", "du", "rp", "sh", "fav", "nt", "caps"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "n": { "type": "string", "maxLength": 24 },
+        "s": { "$ref": "#/$defs/playbackState" },
+        "v": { "type": ["integer", "null"], "minimum": 0, "maximum": 100 },
+        "m": { "type": "boolean" },
+        "t": { "type": "string", "maxLength": 48 },
+        "a": { "type": "string", "maxLength": 36 },
+        "al": { "type": "string", "maxLength": 36 },
+        "el": { "type": "integer", "minimum": 0 },
+        "du": { "type": "integer", "minimum": 0 },
+        "rp": { "$ref": "#/$defs/repeatMode" },
+        "sh": { "type": "boolean" },
+        "fav": { "type": "boolean" },
+        "nt": { "type": "string", "maxLength": 36 },
+        "caps": { "$ref": "#/$defs/capabilities" }
+      }
+    },
+    "listItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["k", "t", "sub", "c"],
+      "properties": {
+        "k": { "type": "string", "minLength": 1 },
+        "t": { "type": "string", "maxLength": 40 },
+        "sub": { "type": "string", "maxLength": 28 },
+        "c": { "type": "boolean" }
+      }
+    },
+    "healthResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok", "api_version", "plugin_version", "ma_version"],
+      "properties": {
+        "ok": { "const": true },
+        "api_version": { "const": 1 },
+        "plugin_version": { "type": "string", "minLength": 1 },
+        "ma_version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "playersResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok", "total", "offset", "limit", "items"],
+      "properties": {
+        "ok": { "const": true },
+        "total": { "type": "integer", "minimum": 0 },
+        "offset": { "type": "integer", "minimum": 0 },
+        "limit": { "type": "integer", "minimum": 1, "maximum": 15 },
+        "items": {
+          "type": "array",
+          "maxItems": 15,
+          "items": { "$ref": "#/$defs/playerSummary" }
+        }
+      }
+    },
+    "stateResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok", "p"],
+      "properties": {
+        "ok": { "const": true },
+        "p": { "$ref": "#/$defs/playerSnapshot" }
+      }
+    },
+    "actionResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok", "settled", "p"],
+      "properties": {
+        "ok": { "const": true },
+        "settled": { "type": "boolean" },
+        "p": { "$ref": "#/$defs/playerSnapshot" }
+      }
+    },
+    "itemsResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok", "kind", "total", "offset", "limit", "cur", "items"],
+      "properties": {
+        "ok": { "const": true },
+        "kind": { "type": "string", "enum": ["queue", "playlists", "favorites"] },
+        "total": { "type": "integer", "minimum": 0 },
+        "offset": { "type": "integer", "minimum": 0 },
+        "limit": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "cur": { "type": ["integer", "null"], "minimum": 0 },
+        "items": {
+          "type": "array",
+          "maxItems": 12,
+          "items": { "$ref": "#/$defs/listItem" }
+        }
+      }
+    },
+    "errorResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok", "code", "error", "req_id"],
+      "properties": {
+        "ok": { "const": false },
+        "code": { "type": "string", "minLength": 1 },
+        "error": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "req_id": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+<strings>
+    <string id="AppName">MA Remote</string>
+
+    <string id="SettingServerUrlTitle">Server URL (HTTPS)</string>
+    <string id="SettingServerUrlPrompt">https://ma.example.com</string>
+    <string id="SettingAccessTokenTitle">Access Token</string>
+    <string id="SettingAccessTokenPrompt">Music Assistant long-lived token</string>
+    <string id="SettingPreferredPlayerTitle">Preferred Player ID (optional)</string>
+    <string id="SettingPreferredPlayerPrompt">Leave blank for auto (phone first)</string>
+    <string id="SettingPollIntervalTitle">Poll Interval (5-60s)</string>
+    <string id="SettingSeekStepTitle">Seek Step (5-60s)</string>
+    <string id="SettingVolumeStepTitle">Volume Step (1-20%)</string>
+    <string id="SettingVibrateTitle">Vibrate on Button Press</string>
+</strings>

@@ -1,0 +1,108 @@
+name: Garmin Connect IQ Build & Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "garmin-app/**"
+      - "docs/protocol/**"
+      - ".github/workflows/garmin.yml"
+    tags:
+      - "watch-v*"
+  pull_request:
+    paths:
+      - "garmin-app/**"
+      - "docs/protocol/**"
+      - ".github/workflows/garmin.yml"
+
+jobs:
+  build-watch-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate manifest and XML resources
+        run: |
+          python3 -c '
+          import xml.etree.ElementTree as ET, glob
+          for path in ["garmin-app/manifest.xml"] + glob.glob("garmin-app/resources/**/*.xml", recursive=True):
+              ET.parse(path)
+              print("Valid XML:", path)
+          '
+
+      - name: Check if Garmin SDK credentials are configured
+        id: creds
+        env:
+          GARMIN_USERNAME: ${{ secrets.GARMIN_SDK_USERNAME }}
+          GARMIN_PASSWORD: ${{ secrets.GARMIN_SDK_PASSWORD }}
+        run: |
+          if [[ -n "${GARMIN_USERNAME}" && -n "${GARMIN_PASSWORD}" ]]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          elif [[ "${GITHUB_REF}" == refs/tags/watch-v* ]]; then
+            echo "::error::watch-v* release requires GARMIN_SDK_USERNAME and GARMIN_SDK_PASSWORD secrets."
+            exit 1
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Garmin SDK secrets not configured; skipping monkeyc compilation."
+          fi
+
+      - name: Install Java
+        if: steps.creds.outputs.available == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install Go
+        if: steps.creds.outputs.available == 'true'
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+
+      - name: Download SDK, Fenix 7 device profile, and compile
+        if: steps.creds.outputs.available == 'true'
+        env:
+          GARMIN_USERNAME: ${{ secrets.GARMIN_SDK_USERNAME }}
+          GARMIN_PASSWORD: ${{ secrets.GARMIN_SDK_PASSWORD }}
+          GARMIN_DEV_KEY_B64: ${{ secrets.GARMIN_DEV_KEY_B64 }}
+        run: |
+          go install github.com/lindell/connect-iq-sdk-manager-cli@latest
+          export PATH="$HOME/go/bin:$PATH"
+          connect-iq-sdk-manager-cli agreement accept
+          connect-iq-sdk-manager-cli login --username "$GARMIN_USERNAME" --password "$GARMIN_PASSWORD"
+          connect-iq-sdk-manager-cli sdk set latest
+          connect-iq-sdk-manager-cli device download --manifest=garmin-app/manifest.xml
+          export CIQ_SDK_HOME="$(connect-iq-sdk-manager-cli sdk current-path)"
+          chmod +x garmin-app/scripts/build.sh
+          ./garmin-app/scripts/build.sh fenix7
+          if [[ -n "${GARMIN_DEV_KEY_B64}" ]]; then
+            echo "${GARMIN_DEV_KEY_B64}" | base64 -d > /tmp/garmin_release.der
+            GARMIN_DEV_KEY=/tmp/garmin_release.der ./garmin-app/scripts/build.sh --package
+            rm -f /tmp/garmin_release.der
+          fi
+
+      - name: Upload built artifacts
+        if: steps.creds.outputs.available == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: garmin-app-builds
+          path: |
+            garmin-app/bin/*.prg
+            garmin-app/bin/*.iq
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/watch-v')
+    needs: [build-watch-app]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: garmin-app-builds
+          path: dist
+      - name: Publish Watch App Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true

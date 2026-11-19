@@ -1,0 +1,12 @@
+{
+  "config": {
+    "settle_timeout_ms": {
+      "label": "Action state settle timeout (ms)",
+      "description": "Maximum milliseconds to wait for a player state update event after running a watch action before returning the snapshot."
+    },
+    "preferred_player": {
+      "label": "Preferred player (optional)",
+      "description": "Player ID or name substring (for example, your phone's Sendspin player) to prioritize when no player is explicitly selected on the watch."
+    }
+  }
+}

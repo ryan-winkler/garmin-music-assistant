@@ -1,0 +1,9 @@
+<properties>
+    <property id="serverUrl" type="string"></property>
+    <property id="accessToken" type="string"></property>
+    <property id="preferredPlayerId" type="string"></property>
+    <property id="pollIntervalSec" type="number">10</property>
+    <property id="seekStepSec" type="number">15</property>
+    <property id="volumeStep" type="number">5</property>
+    <property id="vibrateFeedback" type="boolean">true</property>
+</properties>

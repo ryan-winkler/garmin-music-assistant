@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+
+# Garmin Connect IQ build artifacts & private signing keys
+garmin-app/bin/
+*.prg
+*.prg.debug.xml
+*.iq
+*.der
+*.pem
+*.key
+developer_key*
+
+# OS / Editor
+.DS_Store
+.vscode/*.log

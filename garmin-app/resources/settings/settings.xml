@@ -1,0 +1,23 @@
+<settings>
+    <setting propertyKey="@Properties.serverUrl" title="@Strings.SettingServerUrlTitle" prompt="@Strings.SettingServerUrlPrompt">
+        <settingConfig type="url" maxLength="512" required="true"/>
+    </setting>
+    <setting propertyKey="@Properties.accessToken" title="@Strings.SettingAccessTokenTitle" prompt="@Strings.SettingAccessTokenPrompt">
+        <settingConfig type="alphaNumeric" maxLength="512" required="true"/>
+    </setting>
+    <setting propertyKey="@Properties.preferredPlayerId" title="@Strings.SettingPreferredPlayerTitle" prompt="@Strings.SettingPreferredPlayerPrompt">
+        <settingConfig type="alphaNumeric" maxLength="128" required="false"/>
+    </setting>
+    <setting propertyKey="@Properties.pollIntervalSec" title="@Strings.SettingPollIntervalTitle">
+        <settingConfig type="numeric" min="5" max="60"/>
+    </setting>
+    <setting propertyKey="@Properties.seekStepSec" title="@Strings.SettingSeekStepTitle">
+        <settingConfig type="numeric" min="5" max="60"/>
+    </setting>
+    <setting propertyKey="@Properties.volumeStep" title="@Strings.SettingVolumeStepTitle">
+        <settingConfig type="numeric" min="1" max="20"/>
+    </setting>
+    <setting propertyKey="@Properties.vibrateFeedback" title="@Strings.SettingVibrateTitle">
+        <settingConfig type="boolean"/>
+    </setting>
+</settings>

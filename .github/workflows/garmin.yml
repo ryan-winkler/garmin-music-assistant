@@ -66,12 +66,13 @@ jobs:
           GARMIN_PASSWORD: ${{ secrets.GARMIN_SDK_PASSWORD }}
           GARMIN_DEV_KEY_B64: ${{ secrets.GARMIN_DEV_KEY_B64 }}
         run: |
+          mkdir -p ~/.Garmin/ConnectIQ/Sdks ~/.Garmin/ConnectIQ/Devices
           go install github.com/lindell/connect-iq-sdk-manager-cli@latest
           export PATH="$HOME/go/bin:$PATH"
           connect-iq-sdk-manager-cli agreement accept
           connect-iq-sdk-manager-cli login --username "$GARMIN_USERNAME" --password "$GARMIN_PASSWORD"
-          connect-iq-sdk-manager-cli sdk set latest
-          connect-iq-sdk-manager-cli device download --manifest=garmin-app/manifest.xml
+          connect-iq-sdk-manager-cli sdk set ">=9.0.0"
+          connect-iq-sdk-manager-cli device download --manifest=garmin-app/manifest.xml -F
           export CIQ_SDK_HOME="$(connect-iq-sdk-manager-cli sdk current-path)"
           chmod +x garmin-app/scripts/build.sh
           ./garmin-app/scripts/build.sh fenix7

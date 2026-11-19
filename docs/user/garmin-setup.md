@@ -12,11 +12,12 @@
 ### Sideload Over USB (Development / Immediate Testing)
 1. Install the Garmin Connect IQ SDK and Fenix 7 device profile:
    ```bash
+   mkdir -p ~/.Garmin/ConnectIQ/Sdks ~/.Garmin/ConnectIQ/Devices
    go install github.com/lindell/connect-iq-sdk-manager-cli@latest
    connect-iq-sdk-manager-cli agreement accept
    connect-iq-sdk-manager-cli login
-   connect-iq-sdk-manager-cli sdk set latest
-   connect-iq-sdk-manager-cli device download --manifest=garmin-app/manifest.xml
+   connect-iq-sdk-manager-cli sdk set ">=9.0.0"
+   connect-iq-sdk-manager-cli device download -d fenix7 -F
    export CIQ_SDK_HOME="$(connect-iq-sdk-manager-cli sdk current-path)"
    ```
 2. Build for Fenix 7:

@@ -51,11 +51,12 @@ Error: Garmin Connect IQ SDK (monkeyc) not found.
 Install it with connect-iq-sdk-manager-cli (or Garmin SDK Manager), log in with your Garmin Developer account,
 and download the Fenix 7 device profile:
 
+  mkdir -p ~/.Garmin/ConnectIQ/Sdks ~/.Garmin/ConnectIQ/Devices
   go install github.com/lindell/connect-iq-sdk-manager-cli@latest
   connect-iq-sdk-manager-cli agreement accept
   connect-iq-sdk-manager-cli login
-  connect-iq-sdk-manager-cli sdk set latest
-  connect-iq-sdk-manager-cli device download --manifest=garmin-app/manifest.xml
+  connect-iq-sdk-manager-cli sdk set ">=9.0.0"
+  connect-iq-sdk-manager-cli device download -d fenix7 -F
   export CIQ_SDK_HOME="$(connect-iq-sdk-manager-cli sdk current-path)"
 EOF
     exit 1

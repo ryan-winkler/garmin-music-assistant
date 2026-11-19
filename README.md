@@ -117,12 +117,13 @@ curl -sS -X POST -H "Authorization: Bearer $MA_TOKEN" -H "Content-Type: applicat
 ### 3. Compile & Test in the Garmin Connect IQ Simulator (No Watch Required)
 Install the headless Connect IQ SDK CLI (requires Go, Java 21, and a free Garmin Developer account):
 ```bash
+mkdir -p ~/.Garmin/ConnectIQ/Sdks ~/.Garmin/ConnectIQ/Devices
 go install github.com/lindell/connect-iq-sdk-manager-cli@latest
 export PATH="$HOME/go/bin:$PATH"
 connect-iq-sdk-manager-cli agreement accept
 connect-iq-sdk-manager-cli login
-connect-iq-sdk-manager-cli sdk set latest
-connect-iq-sdk-manager-cli device download --manifest=garmin-app/manifest.xml
+connect-iq-sdk-manager-cli sdk set ">=9.0.0"
+connect-iq-sdk-manager-cli device download -d fenix7 -F
 export CIQ_SDK_HOME="$(connect-iq-sdk-manager-cli sdk current-path)"
 
 # Compile strict (-l 3 -O 2 -w) for Fenix 7

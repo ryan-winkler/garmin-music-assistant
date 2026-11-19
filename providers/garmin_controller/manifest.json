@@ -1,11 +1,11 @@
 {
   "type": "plugin",
   "domain": "garmin_controller",
-  "stage": "beta",
+  "stage": "alpha",
   "name": "Garmin Connect IQ Controller",
-  "description": "Compact, watch-safe REST API for controlling Music Assistant playback (including background phone players via Sendspin and multi-room speakers) from a Garmin Connect IQ watch.",
-  "codeowners": ["@ryanwinkler"],
+  "description": "Experimental compact REST API for controlling Music Assistant playback (including background phone players via Sendspin and multi-room speakers) from a Garmin Connect IQ watch.",
+  "codeowners": ["@ryan-winkler"],
   "requirements": [],
-  "documentation": "https://github.com/ryanwinkler/garmin-music-assistant/blob/main/docs/user/music-assistant-setup.md",
+  "documentation": "https://github.com/ryan-winkler/garmin-music-assistant/blob/main/docs/user/music-assistant-setup.md",
   "multi_instance": false
 }
